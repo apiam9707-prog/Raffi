@@ -1,0 +1,223 @@
+ <!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Couple Game 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f9a8d4, #c084fc);
+      color: #fff;
+      text-align: center;
+      padding: 30px;
+      overflow: hidden;
+      transition: background 0.5s ease;
+    }h1 {
+  font-size: 2.2em;
+  margin-bottom: 10px;
+}
+
+input, textarea {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  margin: 10px;
+  width: 80%;
+}
+
+button {
+  padding: 12px 25px;
+  font-size: 16px;
+  margin: 10px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  transition: 0.3s;
+  background-color: #ec4899;
+}
+
+button::after {
+  content: "❤️";
+  margin-left: 5px;
+}
+
+#gameArea { display: none; margin-top: 20px; }
+
+#result {
+  margin-top: 20px;
+  font-size: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  min-height: 60px;
+}
+
+#answerArea {
+  display: none;
+  margin-top: 20px;
+}
+
+#showAnswer {
+  font-style: italic;
+  margin-top: 10px;
+  background: rgba(0,0,0,0.2);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.heart {
+  position: fixed;
+  top: -10px;
+  width: 20px;
+  height: 20px;
+  background-color: #ff69b4;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: fall 5s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.night-mode {
+  background: #0b0c2a;
+}
+
+.heart-moon {
+  width: 60px;
+  height: 60px;
+  background: pink;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  box-shadow: 0 0 20px #f9a8d4;
+}
+
+@media screen and (max-width: 600px) {
+  input, textarea { width: 100%; }
+}
+
+  </style>
+</head>
+<body>  <h1>💖 Game Pasangan: Truth or Dare</h1>  <div id="startArea">
+    <p>Masukkan nama kamu & pasangan dulu ya!</p>
+    <input id="yourName" placeholder="Namamu">
+    <input id="partnerName" placeholder="Nama Pasangan">
+    <br>
+    <button id="startBtn">Mulai</button>
+  </div>  <div id="gameArea">
+    <p id="greet"></p>
+    <button id="truthBtn">Truth</button>
+    <button id="dareBtn">Dare</button>
+    <button id="nextBtn">Next</button>
+    <button id="themeBtn">Tema</button><div id="result">Klik Truth atau Dare untuk mulai!</div>
+
+<div id="answerArea">
+  <textarea id="answerInput" rows="3" placeholder="Ketik jawabanmu di sini..."></textarea><br>
+  <button id="submitAnswer">Kirim</button>
+  <div id="showAnswer"></div>
+</div>
+
+  </div>  <div id="moon"></div>  <audio id="clickSound">
+    <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+  </audio>  <audio id="bgMusic" autoplay loop>
+    <source src="https://files.catbox.moe/6o3p91.mp3" type="audio/mpeg">
+  </audio>  <script>
+    const truths = [
+      "Apa kenangan paling romantis dengan pasanganmu?",
+      "Apa hal terkecil yang bikin kamu bahagia darinya?",
+      "Kalau kamu mimpi bareng pasangan, itu tentang apa?",
+      "Kapan kamu merasa paling disayang?",
+      "Apa yang kamu takutkan kehilangan darinya?"
+    ];
+
+    const dares = [
+      "Katakan 'Aku sayang kamu' dengan gaya lucu.",
+      "Bikin janji romantis sekarang juga.",
+      "Tunjukkan wajah cinta paling norak.",
+      "Tulis puisi 3 baris untuk pasanganmu.",
+      "Ambil selfie lucu dan kirim ke pasangan!"
+    ];
+
+    const clickSound = document.getElementById("clickSound");
+    const result = document.getElementById("result");
+    const gameArea = document.getElementById("gameArea");
+    const answerArea = document.getElementById("answerArea");
+    const answerInput = document.getElementById("answerInput");
+    const showAnswer = document.getElementById("showAnswer");
+    const moon = document.getElementById("moon");
+
+    document.getElementById("startBtn").onclick = () => {
+      const yourName = document.getElementById("yourName").value;
+      const partnerName = document.getElementById("partnerName").value;
+      if (yourName && partnerName) {
+        document.getElementById("greet").textContent = `Halo ${yourName} & ${partnerName}, selamat bermain! ❤️`;
+        document.getElementById("startArea").style.display = "none";
+        gameArea.style.display = "block";
+      } else {
+        alert("Isi dulu nama kamu dan pasangan ya!");
+      }
+    };
+
+    function showQuestion(text) {
+      clickSound.play();
+      result.textContent = text;
+      answerInput.value = "";
+      answerArea.style.display = "block";
+      showAnswer.textContent = "";
+    }
+
+    document.getElementById("truthBtn").onclick = () => {
+      const t = truths[Math.floor(Math.random() * truths.length)];
+      showQuestion("Truth 💬: " + t);
+    };
+
+    document.getElementById("dareBtn").onclick = () => {
+      const d = dares[Math.floor(Math.random() * dares.length)];
+      showQuestion("Dare 🎯: " + d);
+    };
+
+    document.getElementById("nextBtn").onclick = () => {
+      clickSound.play();
+      result.textContent = "Klik Truth atau Dare untuk pertanyaan/tantangan selanjutnya!";
+      answerArea.style.display = "none";
+      showAnswer.textContent = "";
+    };
+
+    let darkMode = false;
+    document.getElementById("themeBtn").onclick = () => {
+      darkMode = !darkMode;
+      document.body.classList.toggle("night-mode", darkMode);
+
+      if (darkMode) {
+        moon.className = "heart-moon";
+        for (let i = 0; i < 20; i++) {
+          const heart = document.createElement("div");
+          heart.classList.add("heart");
+          heart.style.left = Math.random() * 100 + "%";
+          heart.style.animationDelay = Math.random() * 5 + "s";
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 5000);
+        }
+      } else {
+        moon.className = "";
+      }
+    };
+
+    document.getElementById("submitAnswer").onclick = () => {
+      const answer = answerInput.value.trim();
+      if (answer !== "") {
+        showAnswer.textContent = `💌 Jawabanmu: ${answer}`;
+        window.open(`https://wa.me/6283890982116?text=Jawaban: ${encodeURIComponent(answer)}`, "_blank");
+      } else {
+        alert("Ketik jawaban dulu ya!");
+      }
+    };
+  </script></body>
+</html>
